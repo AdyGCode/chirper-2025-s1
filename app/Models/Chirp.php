@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Events\ChirpCreated;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -28,15 +29,6 @@ class Chirp extends Model
     protected $hidden = [
     ];
 
-    /**
-     * A Chirp belongs to a User
-     *
-     * @return BelongsTo
-     */
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
-    }
 
     /**
      * Get the attributes that should be cast.
@@ -48,4 +40,23 @@ class Chirp extends Model
         return [
         ];
     }
+
+
+    /**
+     * Events that will be triggered & dispatched
+     */
+    protected $dispatchesEvents = [
+        'created' => ChirpCreated::class,
+    ];
+
+    /**
+     * A Chirp belongs to a User
+     *
+     * @return BelongsTo
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
 }
