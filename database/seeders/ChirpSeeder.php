@@ -16,7 +16,7 @@ class ChirpSeeder extends Seeder
     {
         $users = User::all();
 
-        for ($count = 0; $count <= 3; $count++) {
+        for ($count = 0; $count <= 1; $count++) {
             foreach ($users as $user) {
                 $chirpMessage = "[$count] " . Lorem::paragraph();
                 $chirp = new Chirp([

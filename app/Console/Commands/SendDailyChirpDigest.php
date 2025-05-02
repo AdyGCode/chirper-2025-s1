@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Services\ChirpBatchService;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
 
 class SendDailyChirpDigest extends Command
 {
@@ -27,8 +28,16 @@ class SendDailyChirpDigest extends Command
     public function handle(ChirpBatchService $batchService): int
     {
         $this->info('Sending daily Chirp digest...');
+        Log::info('Daily digest command started');
+
+        $batchSize = $batchService->getCurrentBatch()->count();
+        $this->info("Current batch has {$batchSize} chirps");
+        Log::info('Current batch size', ['count' => $batchSize]);
+
         $batchService->sendEndOfDayBatch();
+
         $this->info('Daily Chirp digest sent!');
+        Log::info('Daily digest command completed');
 
         return Command::SUCCESS;
     }

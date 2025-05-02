@@ -17,19 +17,36 @@ class ChirpBatchService
     protected const BATCH_CACHE_KEY = 'chirp_batch';
 
     /**
+     * Cache duration in minutes.
+     */
+    protected const CACHE_DURATION = 120; // 2 hours
+
+    /**
      * Add a chirp to the current batch.
      */
     public function addChirpToBatch(Chirp $chirp): void
     {
-        $batch = $this->getCurrentBatch();
-        $batch->push($chirp);
+        // Get current IDs from cache
+        $chirpIds = Cache::get(self::BATCH_CACHE_KEY, []);
 
-        Log::info('Added Chirp to batch', ['chirp_id' => $chirp->id, 'batch_size' => $batch->count()]);
+        // Add the new ID if not already present
+        if (!in_array($chirp->id, $chirpIds)) {
+            $chirpIds[] = $chirp->id;
+        }
 
-        $this->storeBatch($batch);
+        // Store updated IDs
+        Cache::put(self::BATCH_CACHE_KEY, $chirpIds, self::CACHE_DURATION);
 
-        // If we've reached 10 chirps, send the notification
-        if ($batch->count() >= 10) {
+        Log::info('Added Chirp to batch', [
+            'chirp_id' => $chirp->id,
+            'batch_size' => count($chirpIds),
+            'message' => $chirp->message,
+            'all_ids' => $chirpIds
+        ]);
+
+        // If we've reached 3 chirps, send the notification
+        if (count($chirpIds) >= 3) {
+            Log::info('Batch threshold reached, sending notification', ['batch_size' => count($chirpIds)]);
             $this->sendBatchNotification();
         }
     }
@@ -39,7 +56,17 @@ class ChirpBatchService
      */
     public function getCurrentBatch(): Collection
     {
-        return Cache::get(self::BATCH_CACHE_KEY, collect());
+        $chirpIds = Cache::get(self::BATCH_CACHE_KEY, []);
+        Log::debug('Retrieved chirp IDs from cache', ['ids' => $chirpIds]);
+
+        // If we have IDs, load the fresh Chirp models
+        if (!empty($chirpIds)) {
+            $batch = Chirp::with('user')->whereIn('id', $chirpIds)->get();
+            Log::debug('Loaded Chirp models from database', ['batch_size' => $batch->count()]);
+            return $batch;
+        }
+
+        return collect();
     }
 
     /**
@@ -47,7 +74,13 @@ class ChirpBatchService
      */
     protected function storeBatch(Collection $batch): void
     {
-        Cache::put(self::BATCH_CACHE_KEY, $batch);
+        Log::debug('Storing batch in cache', ['batch_size' => $batch->count()]);
+
+        // Store IDs instead of full objects to avoid serialization issues
+        $chirpIds = $batch->pluck('id')->toArray();
+        Log::debug('Storing chirp IDs', ['ids' => $chirpIds]);
+
+        Cache::put(self::BATCH_CACHE_KEY, $chirpIds, self::CACHE_DURATION);
     }
 
     /**
@@ -55,10 +88,22 @@ class ChirpBatchService
      */
     public function sendBatchNotification(): void
     {
-        $batch = $this->getCurrentBatch();
+        // Important: Get chirp IDs first before retrieving models
+        $chirpIds = Cache::get(self::BATCH_CACHE_KEY, []);
+
+        if (empty($chirpIds)) {
+            Log::info('Batch is empty (no IDs), no notifications sent');
+            return;
+        }
+
+        Log::info('Found chirp IDs for notification', ['ids' => $chirpIds]);
+
+        // Now get the full models
+        $batch = Chirp::with('user')->whereIn('id', $chirpIds)->get();
+        Log::info('Loaded chirp models for notification', ['found' => $batch->count(), 'expected' => count($chirpIds)]);
 
         if ($batch->isEmpty()) {
-            Log::info('Batch is empty, no notifications sent');
+            Log::info('Batch is empty (no models found), no notifications sent');
             return;
         }
 
@@ -66,13 +111,19 @@ class ChirpBatchService
         $chirpAuthorIds = $batch->pluck('user_id')->unique()->toArray();
         $users = User::whereNotIn('id', $chirpAuthorIds)->get();
 
+        Log::info('Sending batch notifications', [
+            'recipient_count' => $users->count(),
+            'chirp_count' => $batch->count(),
+            'author_ids' => $chirpAuthorIds
+        ]);
+
         // Send notification to each user
         foreach ($users as $user) {
             $user->notify(new ChirpBatchNotification($batch));
-            Log::info('Sent batch notification', ['user_id' => $user->id, 'chirp_count' => $batch->count()]);
+            Log::info('Sent batch notification', ['user_id' => $user->id, 'user_name' => $user->name]);
         }
 
-        // Clear the batch
+        // Clear the batch AFTER we've successfully sent notifications
         $this->clearBatch();
     }
 

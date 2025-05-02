@@ -8,14 +8,17 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Log;
 
 class SendChirpCreatedNotifications implements ShouldQueue
-
 {
+
+    protected ChirpBatchService $batchService;
+
+
     /**
      * Create the event listener.
      */
     public function __construct(ChirpBatchService $batchService)
     {
-        //
+        $this->batchService = $batchService;
     }
 
     /**
