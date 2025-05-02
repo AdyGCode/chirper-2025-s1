@@ -3,9 +3,9 @@
 namespace App\Listeners;
 
 use App\Events\ChirpCreated;
-use App\Models\User;
-use App\Notifications\NewChirp;
+use App\Services\ChirpBatchService;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Support\Facades\Log;
 
 class SendChirpCreatedNotifications implements ShouldQueue
 
@@ -13,7 +13,7 @@ class SendChirpCreatedNotifications implements ShouldQueue
     /**
      * Create the event listener.
      */
-    public function __construct()
+    public function __construct(ChirpBatchService $batchService)
     {
         //
     }
@@ -23,8 +23,12 @@ class SendChirpCreatedNotifications implements ShouldQueue
      */
     public function handle(ChirpCreated $event): void
     {
-        foreach (User::whereNot('id', $event->chirp->user_id)->cursor() as $user) {
-            $user->notify(new NewChirp($event->chirp));
-        }
+//        foreach (User::whereNot('id', $event->chirp->user_id)->cursor() as $user) {
+//            $user->notify(new NewChirp($event->chirp));
+//        }
+
+        Log::info('SendChirpCreatedNotifications triggered', ['chirp_id' => $event->chirp->id]);
+
+        $this->batchService->addChirpToBatch($event->chirp);
     }
 }
