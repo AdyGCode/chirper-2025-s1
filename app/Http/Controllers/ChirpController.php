@@ -2,12 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\ChirpCreated;
 use App\Models\Chirp;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Log;
 
 class ChirpController extends Controller
 {
@@ -40,9 +38,6 @@ class ChirpController extends Controller
         ]);
 
         $chirp = $request->user()->chirps()->create($validated);
-
-        Log::info('Firing ChirpCreated event', ['chirp_id' => $chirp->id]);
-        event(new ChirpCreated($chirp));
 
         return redirect(route('chirps.index'));
     }
