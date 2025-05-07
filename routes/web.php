@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ChirpController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\UserManagementController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -40,6 +41,8 @@ Route::resource('chirps', ChirpController::class)
     ->middleware(['auth',]);
 //    ->middleware(['auth', 'verified',],);
 
-
+Route::resource('users',
+    UserManagementController::class)
+    ->middleware(['auth',]);
 
 require __DIR__.'/auth.php';
