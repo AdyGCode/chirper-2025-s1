@@ -3,11 +3,11 @@
 @php
 $classes = ($active ?? false)
             ? 'block w-full ps-3 pe-4 py-2 text-start text-base font-medium
-            border-l-4 border-indigo-500
-            text-indigo-700 dark:text-indigo-300
-            bg-indigo-100 dark:bg-indigo-800
+            border-l-4 border-amber-500
+            text-amber-700 dark:text-amber-300
+            bg-amber-100 dark:bg-amber-800
             focus:outline-none
-            focus:text-indigo-800 focus:bg-indigo-100 focus:border-indigo-700
+            focus:text-amber-800 focus:bg-amber-100 focus:border-amber-700
             transition duration-150 ease-in-out'
             : 'block w-full ps-3 pe-4 py-2 text-start text-base font-medium
             border-l-4 border-transparent

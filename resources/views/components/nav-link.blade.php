@@ -3,9 +3,9 @@
 @php
 $classes = ($active ?? false)
             ? 'inline-flex items-center px-1 pt-1 border-b-2
-            border-indigo-400
-            text-sm font-medium leading-5 text-indigo-500 dark:text-indigo-700 hover:text-indigo-300
-            focus:outline-none focus:border-indigo-700
+            border-amber-400
+            text-sm font-medium leading-5 text-amber-500 dark:text-amber-700 hover:text-amber-300
+            focus:outline-none focus:border-amber-700
             transition duration-150 ease-in-out'
 
             : 'inline-flex items-center px-1 pt-1 border-b-2
