@@ -1,10 +1,22 @@
 <x-app-layout>
 
-    <x-slot name="header" class="flex flex-row flex-between">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+    <x-slot name="header" >
+        <h2 class="grow font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Users') }}
         </h2>
-        <p><a href="{{ route('users.create') }}">New User</a></p>
+
+        <p><a href="{{ route('users.create') }}"
+              class="bg-gray-100 p-2 rounded">New User</a></p>
+
+        <form action="{{ route('users.index') }}" method="GET">
+            <x-text-input id="search"
+                          type="text"
+                          name="search"
+                          />
+
+            <button type="submit" class="bg-gray-200    ">Search</button>
+        </form>
+
     </x-slot>
 
     <div class="py-12">
@@ -28,6 +40,10 @@
 
                             <h5 class="flex flex-col col-span-4 text-gray-800">
                                 {{ $user->name }}
+                                <br>
+                                <small class="text-xs text-gray-400">
+                                    {{ $user->email }}
+                                </small>
                             </h5>
 
                             <p class="text-xs text-gray-400 col-span-1 p-1">
@@ -42,10 +58,9 @@
                             <!-- Only Admin and Staff access these options -->
                             <form method="POST"
                                   class="col-span-2 flex border border-gray-300 rounded-full px-0 overflow-hidden"
-                                  action="{{ route('users.destroy', $user) }}">
+                                  action="{{ route('users.delete', $user) }}">
 
                                 @csrf
-                                @method('delete')
 
                                 <a href="{{ route('users.show', $user) }}"
                                    class="bg-gray-100 hover:bg-blue-500
@@ -85,7 +100,7 @@
                         </section>
                     @endforeach
                     <footer class="px-4 pb-2 pt-4 ">
-                        Pagination Navigation here
+                        {{ $users->links() }}
                     </footer>
                 </article>
 

@@ -9,16 +9,36 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules;
 use function PHPUnit\Framework\isNull;
+use Illuminate\Support\Str;
 
 class UserManagementController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::all();
-        return view('users.index', compact(['users',]));
+        // TODO: Pagination
+        // TODO: Search/Filter
+        // TODO: Only allow authorised users (Admin/Staff Roles)
+
+        $validated = $request->validate([
+            'search' => ['nullable', 'string',]
+        ]);
+
+        $search = $validated['search'] ?? '';
+
+        $users = User::whereLike('name', '%' . $search . '%')
+            ->orWhereLike('email', "%$search%")
+            ->orWhereLike('position', "%$search%")
+            ->paginate(10);
+
+        $users = User::whereAny(
+            ['name', 'email','position',], 'LIKE', "%$search%")
+            ->paginate(10);
+
+
+        return view('users.index', compact(['users', 'search',]));
     }
 
     /**
@@ -34,9 +54,12 @@ class UserManagementController extends Controller
         ]);
 
         $user = User::create([
-            'name' => $request->name,
-            'email' => mb_strtolower($request->email),
-            'password' => Hash::make($request->password),
+//            'name' => $request->name,
+//            'email' => mb_strtolower($request->email),
+//            'password' => Hash::make($request->password),
+            'name' => $validated['name'],
+            'email' => Str::lower($validated['email']),
+            'password' => Hash::make($validated['password']),
         ]);
 
         return redirect(route('users.index'));
@@ -69,10 +92,9 @@ class UserManagementController extends Controller
     public function edit(User $user)
     {
         // TODO: Update when we add Roles & Permissions
-
         $roles = Collection::empty();
 
-        return view('users.edit', compact(['roles', "user",]));
+        return view('users.edit', compact(['roles', 'user',]));
     }
 
     /**
@@ -85,8 +107,19 @@ class UserManagementController extends Controller
 
         $validated = $request->validate([
             'name' => ['required', 'min:2', 'max:192',],
-            'email' => ['required', 'string', 'email', 'max:255', Rule::unique(User::class)->ignore($user),],
-            'password' => ['sometimes', 'nullable', 'confirmed', Rules\Password::defaults()],
+            'email' => [
+                'required',
+                'string',
+                'email',
+                'max:255',
+                Rule::unique(User::class)->ignore($user),
+            ],
+            'password' => [
+                'sometimes',
+                'nullable',
+                'confirmed',
+                Rules\Password::defaults()
+            ],
             'role' => ['nullable',],
         ]);
 
@@ -112,22 +145,31 @@ class UserManagementController extends Controller
      * This is a prequel to the actual destruction of the record.
      * Put in place to provide a "confirm the action".
      *
-     * @param string $id
+     * @param User $user
      */
-    public function delete(string $id)
+    public function delete(User $user)
     {
         // TODO: Update when we add Roles & Permissions
 
-        //
+        return view("users.delete", compact(['user',]));
+
     }
 
     /**
      * Remove the specified resource from storage.
+     *
+     * @param User $user
+     * @return void
      */
-    public function destroy(string $id)
+    public function destroy(User $user)
     {
         // TODO: Update when we add Roles & Permissions
 
-        //
+        $oldUser = $user;
+
+        $user->delete();
+
+        return redirect(route('users.index'));
+
     }
 }
