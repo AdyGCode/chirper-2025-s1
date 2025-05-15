@@ -37,12 +37,19 @@ Route::middleware('auth')->group(function () {
 //    ->middleware(['auth', 'verified']);
 
 Route::resource('chirps', ChirpController::class)
-    ->only(['index', 'store', 'edit', 'update', 'destroy',])
+    ->only(['index', 'store', 'edit', 'update', 'destroy'])
     ->middleware(['auth',]);
 //    ->middleware(['auth', 'verified',],);
+
+
 
 Route::resource('users',
     UserManagementController::class)
     ->middleware(['auth',]);
 
-require __DIR__.'/auth.php';
+
+Route::post('users/{user}/delete', [UserManagementController::class, "delete"])
+    ->name('users.delete')
+    ->middleware(['auth',]);
+
+require __DIR__ . '/auth.php';

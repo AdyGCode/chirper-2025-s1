@@ -35,6 +35,11 @@
                             {{ __('Chirps') }}
                         </x-nav-link>
 
+                        <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')">
+                            <i class="fa-solid fa-users mr-1"></i>
+                            {{ __('Users') }}
+                        </x-nav-link>
+
                         <x-nav-link :href="route('dashboard')" :active="request()->routeIs('other.*')">
                             <i class="fa-solid fa-link mr-1"></i>
                             {{ __('Other Links') }} ({{ __('Authenticated') }})
@@ -141,9 +146,14 @@
                     {{ __('Dashboard') }}
                 </x-responsive-nav-link>
 
-                <x-responsive-nav-link :href="route('chirps.index')" :active="request()->routeIs('chirps')">
+                <x-responsive-nav-link :href="route('chirps.index')" :active="request()->routeIs('chirps.*')">
                     <i class="fa-solid fa-kiwi-bird mr-1"></i>
                     {{ __('Dashboard') }}
+                </x-responsive-nav-link>
+
+                <x-responsive-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')">
+                    <i class="fa-solid fa-users mr-1"></i>
+                    {{ __('Users') }}
                 </x-responsive-nav-link>
 
                 <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('other.*')">

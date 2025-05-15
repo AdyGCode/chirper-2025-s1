@@ -1,10 +1,44 @@
 <x-app-layout>
 
-    <x-slot name="header" class="flex flex-row flex-between">
+    <x-slot name="header">
+        <a href="{{route('users.index')}}" class="grow">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Users') }}
         </h2>
-        <p><a href="{{ route('users.create') }}">New User</a></p>
+        </a>
+
+        <a href="{{ route('users.create') }}"
+           class="text-green-800 hover:text-green-100
+                 bg-gray-100 hover:bg-green-800
+                 border border-gray-300
+                 rounded-lg
+                 transition ease-in-out duration-200
+                 px-4 py-1">
+            <i class="fa-solid fa-user-plus pr-1 aria-hidden:true"></i>
+            New User
+        </a>
+
+        <form action="{{ route('users.index') }}" method="GET" class="flex flex-row gap-0">
+            <x-text-input id="search"
+                          type="text"
+                          name="search"
+                          class="border border-gray-200 rounded-r-none shadow-transparent"
+                          :value="$search??''"
+            />
+
+            <button type="submit"
+                    class="text-gray-800 hover:text-gray-100
+                         bg-gray-100 hover:bg-gray-800
+                           border border-gray-300
+                           rounded-lg
+                           transition ease-in-out duration-200
+                           px-4 py-1
+                           rounded-l-none">
+                <i class="fa-solid fa-magnifying-glass pr-1 aria-hidden:true"></i>
+                Search
+            </button>
+        </form>
+
     </x-slot>
 
     <div class="py-12">
@@ -23,11 +57,15 @@
 
                     @foreach ($users as $user)
                         <section
-                            class="px-4 grid grid-cols-10 py-1 hover:bg-gray-100 border-b border-b-gray-300 transition duration-150">
+                            class="px-4 grid grid-cols-12 py-1 hover:bg-gray-100 border-b border-b-gray-300 transition duration-150">
                             <p class="col-span-1">{{ $loop->index + 1 }}</p>
 
-                            <h5 class="flex flex-col col-span-4 text-gray-800">
+                            <h5 class="flex flex-col col-span-5 text-gray-800">
                                 {{ $user->name }}
+                                <br>
+                                <small class="text-xs text-gray-400">
+                                    {{ $user->email }}
+                                </small>
                             </h5>
 
                             <p class="text-xs text-gray-400 col-span-1 p-1">
@@ -41,18 +79,17 @@
                             </p>
                             <!-- Only Admin and Staff access these options -->
                             <form method="POST"
-                                  class="col-span-2 flex border border-gray-300 rounded-full px-0 overflow-hidden"
-                                  action="{{ route('users.destroy', $user) }}">
+                                  class="col-span-4 flex border border-gray-300 rounded-lg px-0 overflow-hidden"
+                                  action="{{ route('users.delete', $user) }}">
 
                                 @csrf
-                                @method('delete')
 
                                 <a href="{{ route('users.show', $user) }}"
                                    class="bg-gray-100 hover:bg-blue-500
                                           text-blue-800 hover:text-gray-100 text-center
                                           border-r border-r-gray-300
                                           transition ease-in-out duration-300
-                                          grow px-2
+                                          grow px-6 py-1.5
                                           rounded-l">
                                     <i class="fa-solid fa-user  text-sm"></i>
                                     {{ __('Show') }}
@@ -63,7 +100,7 @@
                                         text-amber-800 hover:text-gray-100  text-center
                                           border-x border-x-gray-300
                                           transition ease-in-out duration-300
-                                          grow px-2 ">
+                                          grow px-6 py-1.5">
                                     <i class="fa-solid fa-user-edit  text-sm"></i>
                                     {{ __('Edit') }}
                                 </a>
@@ -85,7 +122,7 @@
                         </section>
                     @endforeach
                     <footer class="px-4 pb-2 pt-4 ">
-                        Pagination Navigation here
+                        {{ $users->links() }}
                     </footer>
                 </article>
 

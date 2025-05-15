@@ -1,8 +1,8 @@
 <x-app-layout>
 
     <x-slot name="header">
-
         <a href="{{route('users.index')}}" class="grow">
+
         <h2 class="font-semibold text-xl text-gray-800 leading-tight grow">
             {{ __('Users') }}
         </h2>
@@ -29,7 +29,7 @@
 
                     <header class="bg-gray-500 text-gray-50 text-lg px-4 py-2">
                         <h5>
-                            {{ __('Create New User') }}
+                            {{ __('Edit User') }}
                         </h5>
                     </header>
 
@@ -37,18 +37,23 @@
 
                         <form method="POST"
                               class="my-4 px-4 gap-4 flex flex-col text-gray-800"
-                              action="{{ route('users.store') }}">
+                              action="{{ route('users.update', $user) }}">
 
                             @csrf
+                            @method('patch')
 
                             <div class="flex flex-col">
+
                                 <x-input-label for="name" :value="__('Name')"/>
+
                                 <x-text-input id="name" class="block mt-1 w-full"
                                               type="text"
                                               name="name"
-                                              :value="old('name')"
+                                              :value="old('name')??$user->name"
                                               required autofocus autocomplete="name"/>
+
                                 <x-input-error :messages="$errors->get('name')" class="mt-2"/>
+
                             </div>
 
                             <div class="flex flex-col">
@@ -56,7 +61,7 @@
                                 <x-text-input id="Email" class="block mt-1 w-full"
                                               type="text"
                                               name="email"
-                                              :value="old('email')"
+                                              :value="old('email')??$user->email"
                                               required autofocus autocomplete="email"/>
                                 <x-input-error :messages="$errors->get('email')" class="mt-2"/>
                             </div>
@@ -66,8 +71,7 @@
                                 <x-text-input id="Password" class="block mt-1 w-full"
                                               type="text"
                                               name="password"
-                                              :value="old('password')"
-                                              required autofocus/>
+                                              autofocus/>
                                 <x-input-error :messages="$errors->get('password')" class="mt-2"/>
                             </div>
 
@@ -76,8 +80,7 @@
                                 <x-text-input id="Password_Confirmation" class="block mt-1 w-full"
                                               type="text"
                                               name="password_confirmation"
-                                              :value="old('password_confirmation')"
-                                              required autofocus/>
+                                              autofocus/>
                                 <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2"/>
                             </div>
 
@@ -90,7 +93,7 @@
                                               rounded-md shadow-sm"
                                         type="text"
                                         name="role"
-                                        :value="old('role')"
+                                        :value="old('role')??$user->role"
                                         required autofocus autocomplete="role">
                                     <option>
                                         Role will be implemented with Roles & Permissions
