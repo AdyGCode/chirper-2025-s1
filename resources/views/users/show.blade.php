@@ -1,10 +1,23 @@
 <x-app-layout>
 
-    <x-slot name="header" class="flex flex-row flex-between">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Users') }}
-        </h2>
-        <p><a href="{{ route('users.create') }}">New User</a></p>
+    <x-slot name="header">
+        <a href="{{route('users.index')}}" class="grow">
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight grow">
+                {{ __('Users') }}
+            </h2>
+        </a>
+
+        <a href="{{ route('users.create') }}"
+           class="text-green-800 hover:text-green-100
+                 bg-gray-100 hover:bg-green-800
+                 border border-gray-300
+                 rounded-lg
+                 transition ease-in-out duration-200
+                 px-4 py-1">
+            New User
+            <i class="fa-solid fa-user-plus"></i>
+        </a>
+
     </x-slot>
 
     <div class="py-12">

@@ -18,8 +18,6 @@ class UserManagementController extends Controller
      */
     public function index(Request $request)
     {
-        // TODO: Pagination
-        // TODO: Search/Filter
         // TODO: Only allow authorised users (Admin/Staff Roles)
 
         $validated = $request->validate([
@@ -27,11 +25,11 @@ class UserManagementController extends Controller
         ]);
 
         $search = $validated['search'] ?? '';
-
-        $users = User::whereLike('name', '%' . $search . '%')
-            ->orWhereLike('email', "%$search%")
-            ->orWhereLike('position', "%$search%")
-            ->paginate(10);
+//
+//        $users = User::whereLike('name', '%' . $search . '%')
+//            ->orWhereLike('email', "%$search%")
+//            ->orWhereLike('position', "%$search%")
+//            ->paginate(10);
 
         $users = User::whereAny(
             ['name', 'email','position',], 'LIKE', "%$search%")
@@ -135,6 +133,10 @@ class UserManagementController extends Controller
         }
 
         $user->save();
+
+        if (isNull($user->email_verified_at)) {
+            $user->sendEmailVerificationNotification();
+        }
 
         return redirect(route('users.index'));
     }
