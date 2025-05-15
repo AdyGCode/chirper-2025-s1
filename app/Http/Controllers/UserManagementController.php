@@ -8,6 +8,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules;
+use Illuminate\Validation\ValidationException;
 use function PHPUnit\Framework\isNull;
 use Illuminate\Support\Str;
 
@@ -32,7 +33,7 @@ class UserManagementController extends Controller
 //            ->paginate(10);
 
         $users = User::whereAny(
-            ['name', 'email','position',], 'LIKE', "%$search%")
+            ['name', 'email', 'position',], 'LIKE', "%$search%")
             ->paginate(10);
 
 
@@ -44,23 +45,46 @@ class UserManagementController extends Controller
      */
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'name' => ['required', 'min:2', 'max:192',],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:' . User::class],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'role' => ['nullable',],
-        ]);
+        try {
 
-        $user = User::create([
-//            'name' => $request->name,
-//            'email' => mb_strtolower($request->email),
-//            'password' => Hash::make($request->password),
-            'name' => $validated['name'],
-            'email' => Str::lower($validated['email']),
-            'password' => Hash::make($validated['password']),
-        ]);
+            $validated = $request->validate([
+                'name' => ['required', 'min:2', 'max:192',],
+                'email' => ['required', 'string', 'email', 'max:255', 'unique:' . User::class . ',email',],
+                'password' => ['required', 'confirmed', Rules\Password::defaults()],
+                'role' => ['nullable',],
+            ]);
+
+            $user = User::create([
+                'name' => $validated['name'],
+                'email' => Str::lower($validated['email']),
+                'password' => Hash::make($validated['password']),
+            ]);
+
+        } catch (ValidationException $e) {
+
+            flash()->error('Please fix the errors in the form.',
+                [
+                    'position' => 'top-center',
+                    'timeout' => 5000,
+                ],
+                'User Creation Failed');
+
+            return back()->withErrors($e->validator)->withInput();
+
+        }
+
+        $userName = $user->name;
+
+        flash()->success("User $userName created successfully!",
+            [
+                'position' => 'top-center',
+                'timeout' => 5000,
+            ],
+            "User Added");
 
         return redirect(route('users.index'));
+
+
     }
 
     /**
@@ -102,41 +126,71 @@ class UserManagementController extends Controller
     {
         // TODO: Update when we add Roles & Permissions
 
+        try {
 
-        $validated = $request->validate([
-            'name' => ['required', 'min:2', 'max:192',],
-            'email' => [
-                'required',
-                'string',
-                'email',
-                'max:255',
-                Rule::unique(User::class)->ignore($user),
-            ],
-            'password' => [
-                'sometimes',
-                'nullable',
-                'confirmed',
-                Rules\Password::defaults()
-            ],
-            'role' => ['nullable',],
-        ]);
+            $validated = $request->validate([
+                'name' => ['required', 'min:2', 'max:192',],
+                'email' => ['required', 'string', 'email', 'max:255', 'unique:' . User::class . ',email',],
+                'password' => ['required', 'confirmed', Rules\Password::defaults()],
+                'role' => ['nullable',],
+            ]);
 
-        // Remove password if null
-        if (isNull($validated['password'])) {
-            unset($validated['password']);
+            $validated = $request->validate([
+                'name' => ['required', 'min:2', 'max:192',],
+                'email' => [
+                    'required',
+                    'string',
+                    'email',
+                    'max:255',
+                    Rule::unique(User::class)->ignore($user),
+                ],
+                'password' => [
+                    'sometimes',
+                    'nullable',
+                    'confirmed',
+                    Rules\Password::defaults()
+                ],
+                'role' => ['nullable',],
+            ]);
+
+            // Remove password if null
+            if (isNull($validated['password'])) {
+                unset($validated['password']);
+            }
+
+            $user->fill($validated);
+
+            if ($user->isDirty('email')) {
+                $user->email_verified_at = null;
+            }
+
+            $user->save();
+
+        } catch (ValidationException $e) {
+
+            flash()->error('Please fix the errors in the form.',
+                [
+                    'position' => 'top-center',
+                    'timeout' => 5000,
+                ],
+                'User Update Failed');
+
+            return back()->withErrors($e->validator)->withInput();
+
         }
-
-        $user->fill($validated);
-
-        if ($user->isDirty('email')) {
-            $user->email_verified_at = null;
-        }
-
-        $user->save();
 
         if (isNull($user->email_verified_at)) {
             $user->sendEmailVerificationNotification();
         }
+
+        $userName = $user->name;
+
+        flash()->info("User $userName details updated successfully!",
+            [
+                'position' => 'top-center',
+                'timeout' => 5000,
+            ],
+            "User Updated");
 
         return redirect(route('users.index'));
     }
@@ -161,7 +215,7 @@ class UserManagementController extends Controller
      * Remove the specified resource from storage.
      *
      * @param User $user
-     * @return void
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function destroy(User $user)
     {
@@ -170,6 +224,16 @@ class UserManagementController extends Controller
         $oldUser = $user;
 
         $user->delete();
+
+
+        $userName = $oldUser->name;
+
+        flash()->info("User $userName removed successfully!",
+            [
+                'position' => 'top-center',
+                'timeout' => 5000,
+            ],
+            "User Deleted");
 
         return redirect(route('users.index'));
 

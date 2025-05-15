@@ -46,7 +46,7 @@ class UserSeeder extends Seeder
         }
 
         // Add an extra 50 random users
-        User::factory()->count(50)->create();
+        // User::factory()->count(50)->create();
 
     }
 }
