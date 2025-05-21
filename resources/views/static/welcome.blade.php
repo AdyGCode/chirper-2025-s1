@@ -18,6 +18,79 @@
         </div>
 
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg grid grid-cols-3 space-x-12">
+
+                @foreach ($chirps as $chirp)
+                    <section class="p-6 flex space-x-2">
+
+                        <i class="fa-regular fa-comment-dots fa-shake
+                              text-xl text-blue-400"
+                           style="--fa-animation-duration: 2s;
+                               --fa-animation-iteration-count: 2;
+                              --fa-animation-timing: ease-in-out;"
+                           aria-hidden="true"></i>
+
+                        <div class="flex-1">
+                            <div class="flex justify-between items-center">
+                                <h5>
+                                <span class="text-gray-800">
+                                {{ $chirp->user->name }}
+                                </span>
+                                    <small class="ml-2	text-sm text-gray-600">
+                                        {{ $chirp->created_at->format('j M Y, g:i a') }}
+                                    </small>
+                                </h5>
+
+                                @if($chirp->user->is(auth()->user()))
+                                    <x-dropdown>
+
+                                        <x-slot name="trigger">
+                                            <button class="bg-gray-200 rounded hover:bg-black hover:text-white">
+                                                <i class="fa-solid fa-bandage px-4"></i>
+                                            </button>
+                                        </x-slot>
+
+                                        <x-slot name="content">
+                                            <x-dropdown-link
+                                                :href="route('chirps.edit',$chirp)">
+                                                {{ __('Edit') }}
+                                            </x-dropdown-link>
+
+                                            <form method="POST"
+                                                  action="{{ route('chirps.destroy', $chirp) }}">
+                                                @csrf
+                                                @method('delete')
+
+                                                <x-dropdown-link
+                                                    :href="route('chirps.destroy',$chirp)"
+                                                    onclick="event.preventDefault(); this.closest('form').submit();">
+                                                    {{ __('Delete') }}
+                                                </x-dropdown-link>
+
+                                            </form>
+
+                                        </x-slot>
+
+                                    </x-dropdown>
+                                @endif
+
+                            </div>
+                            <p class="mt-4 text-lg text-gray-900">
+                                {{ $chirp->message }}
+                            </p>
+
+                            @livewire('like-dislike', [$chirp])
+
+                        </div>
+
+                    </section>
+                @endforeach
+
+
+            </div>
+        </div>
+
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg grid grid-cols-2 space-x-12">
                 <div class="p-6 text-gray-900 gap-6 flex flex-col">
                     <h3 class="text-xl">Starter Template Includes:</h3>

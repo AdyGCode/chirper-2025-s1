@@ -6,6 +6,8 @@ use App\Events\ChirpCreated;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Chirp extends Model
 {
@@ -57,6 +59,20 @@ class Chirp extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function votes() : HasMany
+    {
+        return $this->hasMany(Vote::class);
+    }
+
+    public function userVotes() : HasOne
+    {
+        return $this->votes() // look at the votes for this chirp
+            ->one()           // retrieve ONE record
+            ->where('user_id', auth()->id());
+            // where the vote has the user_id of the currently logged-in user
+            // returns either the vote value or null
     }
 
 }
