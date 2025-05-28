@@ -11,16 +11,16 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 class SendChirpCreatedNotifications implements ShouldQueue
 {
 
-    protected ChirpBatchService $batchService;
+//    protected ChirpBatchService $batchService;
 
 
     /**
      * Create the event listener.
      */
-    public function __construct(ChirpBatchService $batchService)
-    {
-        $this->batchService = $batchService;
-    }
+//    public function __construct(ChirpBatchService $batchService)
+//    {
+//        $this->batchService = $batchService;
+//    }
 
     /**
      * Handle the event.
