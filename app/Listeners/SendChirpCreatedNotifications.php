@@ -5,7 +5,6 @@ namespace App\Listeners;
 use App\Events\ChirpCreated;
 use App\Models\User;
 use App\Notifications\NewChirp;
-use App\Services\ChirpBatchService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
 class SendChirpCreatedNotifications implements ShouldQueue
