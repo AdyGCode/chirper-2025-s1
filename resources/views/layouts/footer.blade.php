@@ -10,6 +10,8 @@
         <nav class="flex flex-col gap-1">
             <a href="{{ route('home') }}">Home</a>
             <a href="{{ route('home') }}">About</a>
+            <a href="{{ route('privacy') }}">Privacy</a>
+            <a href="{{ route('home') }}">Terms and Conditions</a>
             <a href="{{ route('home') }}">Contact Us</a>
         </nav>
         <nav class="flex flex-col gap-1">

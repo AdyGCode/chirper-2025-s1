@@ -55,7 +55,7 @@ class StaticPageController extends Controller
      */
     public function privacy()
     {
-        //
+        return view('static.privacy');
     }
 
 }
