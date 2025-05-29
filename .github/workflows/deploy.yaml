@@ -22,7 +22,7 @@ jobs:
           node-version: '22'
 
       - name: Install Composer Dependencies
-        run: composer install --no-dev --optimize-autoloader
+        run: composer install --optimize-autoloader
 
       - name: Install Node Dependencies
         run: npm ci
@@ -43,7 +43,7 @@ jobs:
       - name: Run Unit Tests
         run: php artisan test
 
-      - name: Deploy to Server
+      - name: Deploy to UAT Server
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.SSH_HOST }}
