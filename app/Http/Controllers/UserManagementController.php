@@ -83,7 +83,7 @@ class UserManagementController extends Controller
             ],
             "User Added");
 
-        return redirect(route('users.index'));
+        return to_route('users.index');
 
 
     }
