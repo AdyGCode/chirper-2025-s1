@@ -1,16 +1,17 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules;
 use Illuminate\Validation\ValidationException;
 use function PHPUnit\Framework\isNull;
-use Illuminate\Support\Str;
 
 class UserManagementController extends Controller
 {
@@ -83,7 +84,7 @@ class UserManagementController extends Controller
             ],
             "User Added");
 
-        return redirect(route('users.index'));
+        return redirect(route('admin.users.index'));
 
 
     }
@@ -186,7 +187,7 @@ class UserManagementController extends Controller
             ],
             "User Updated");
 
-        return redirect(route('users.index'));
+        return redirect(route('admin.users.index'));
     }
 
     /**
@@ -229,7 +230,7 @@ class UserManagementController extends Controller
             ],
             "User Deleted");
 
-        return redirect(route('users.index'));
+        return redirect(route('admin.users.index'));
 
     }
 }
