@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
@@ -84,7 +84,7 @@ class UserManagementController extends Controller
             ],
             "User Added");
 
-        return redirect(route('admin.users.index'));
+        return to_route('admin.users.index');
 
 
     }
@@ -187,7 +187,7 @@ class UserManagementController extends Controller
             ],
             "User Updated");
 
-        return redirect(route('admin.users.index'));
+        return to_route('admin.users.index');
     }
 
     /**
@@ -230,7 +230,7 @@ class UserManagementController extends Controller
             ],
             "User Deleted");
 
-        return redirect(route('admin.users.index'));
+        return to_route('admin.users.index');
 
     }
 }

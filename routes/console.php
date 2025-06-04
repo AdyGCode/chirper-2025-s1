@@ -20,9 +20,9 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 // For testing, run the chirp digest every five minutes
-Schedule::command('app:send-daily-chirp-digest')
-    ->everyFiveMinutes()
-    ->appendOutputTo(storage_path('logs/scheduler.log'));
+//Schedule::command('app:send-daily-chirp-digest')
+//    ->everyFiveMinutes()
+//    ->appendOutputTo(storage_path('logs/scheduler.log'));
 
 // In production, use this instead:
 // Schedule::command('app:send-daily-chirp-digest')

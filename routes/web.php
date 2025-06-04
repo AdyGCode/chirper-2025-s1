@@ -10,14 +10,25 @@ use Illuminate\Support\Facades\Route;
 //    return view('welcome');
 //})->name('home');
 
-Route::get('/', [StaticPageController::class, 'index'])->name('home');
+Route::get('/', [StaticPageController::class, 'index'])
+    ->name('home');
+
+Route::get('/privacy', [StaticPageController::class, 'privacy'])
+    ->name('privacy');
+
+Route::get('/about', [StaticPageController::class, 'about'])
+    ->name('about');
+
+Route::get('/terms-and-conditions', [StaticPageController::class, 'terms-and-conditions'])
+    ->name('terms-and-conditions');
 
 //Route::get('/dashboard', function () {
 //    return view('dashboard');
 //})->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::get('/dashboard', [StaticPageController::class, 'dashboard'])
-    ->middleware(['auth', 'verified'])->name('dashboard');
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
