@@ -1,13 +1,13 @@
 <x-app-layout>
 
     <x-slot name="header">
-        <a href="{{route('users.index')}}" class="grow">
+        <a href="{{route('admin.users.index')}}" class="grow">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Users') }}
         </h2>
         </a>
 
-        <a href="{{ route('users.create') }}"
+        <a href="{{ route('admin.users.create') }}"
            class="text-green-800 hover:text-green-100
                  bg-gray-100 hover:bg-green-800
                  border border-gray-300
@@ -18,7 +18,7 @@
             New User
         </a>
 
-        <form action="{{ route('users.index') }}" method="GET" class="flex flex-row gap-0">
+        <form action="{{ route('admin.users.index') }}" method="GET" class="flex flex-row gap-0">
             <x-text-input id="search"
                           type="text"
                           name="search"
@@ -80,11 +80,11 @@
                             <!-- Only Admin and Staff access these options -->
                             <form method="POST"
                                   class="col-span-4 flex border border-gray-300 rounded-lg px-0 overflow-hidden"
-                                  action="{{ route('users.delete', $user) }}">
+                                  action="{{ route('admin.users.delete', $user) }}">
 
                                 @csrf
 
-                                <a href="{{ route('users.show', $user) }}"
+                                <a href="{{ route('admin.users.show', $user) }}"
                                    class="bg-gray-100 hover:bg-blue-500
                                           text-blue-800 hover:text-gray-100 text-center
                                           border-r border-r-gray-300
@@ -95,7 +95,7 @@
                                     {{ __('Show') }}
                                 </a>
 
-                                <a href="{{ route('users.edit', $user) }}"
+                                <a href="{{ route('admin.users.edit', $user) }}"
                                    class="bg-gray-100 hover:bg-amber-500
                                         text-amber-800 hover:text-gray-100  text-center
                                           border-x border-x-gray-300

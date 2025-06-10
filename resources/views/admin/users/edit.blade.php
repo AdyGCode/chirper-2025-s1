@@ -1,14 +1,14 @@
 <x-app-layout>
 
     <x-slot name="header">
-        <a href="{{route('users.index')}}" class="grow">
+        <a href="{{route('admin.users.index')}}" class="grow">
 
         <h2 class="font-semibold text-xl text-gray-800 leading-tight grow">
             {{ __('Users') }}
         </h2>
         </a>
 
-        <a href="{{ route('users.create') }}"
+        <a href="{{ route('admin.users.create') }}"
            class="text-green-800 hover:text-green-100
                  bg-gray-100 hover:bg-green-800
                  border border-gray-300
@@ -37,7 +37,7 @@
 
                         <form method="POST"
                               class="my-4 px-4 gap-4 flex flex-col text-gray-800"
-                              action="{{ route('users.update', $user) }}">
+                              action="{{ route('admin.users.update', $user) }}">
 
                             @csrf
                             @method('patch')
@@ -106,7 +106,7 @@
 
                             <div class="flex flex-row gap-6  ">
 
-                                <a href="{{ route('users.index') }}"
+                                <a href="{{ route('admin.users.index') }}"
                                    class="bg-gray-100 hover:bg-blue-500
                                           text-blue-800 hover:text-gray-100 text-center
                                           border border-gray-300

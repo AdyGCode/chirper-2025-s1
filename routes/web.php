@@ -1,9 +1,9 @@
 <?php
 
+use App\Http\Controllers\Admin\UserManagementController;
 use App\Http\Controllers\ChirpController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\StaticPageController;
-use App\Http\Controllers\UserManagementController;
 use Illuminate\Support\Facades\Route;
 
 //Route::get('/', function () {
@@ -59,14 +59,15 @@ Route::resource('chirps', ChirpController::class)
 //    ->middleware(['auth', 'verified',],);
 
 
+Route::name('admin.')
+    ->prefix('admin')
+    ->middleware(['auth', 'verified'])
+    ->group(function () {
+        Route::resource('users', UserManagementController::class);
 
-Route::resource('users',
-    UserManagementController::class)
-    ->middleware(['auth',]);
 
-
-Route::post('users/{user}/delete', [UserManagementController::class, "delete"])
-    ->name('users.delete')
-    ->middleware(['auth',]);
+        Route::post('users/{user}/delete', [UserManagementController::class, "delete"])
+            ->name('users.delete');
+    });
 
 require __DIR__ . '/auth.php';
